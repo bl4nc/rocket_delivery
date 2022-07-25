@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  user_redis:
+    image: redis:latest
+    container_name: user_redis
+    restart: always
+    ports:
+      - '6370:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - user_cache:/data
+
+  user_mongo:
+    image: mongo:latest
+    container_name: user_mongo
+    restart: always
+    environment: 
+      - MONGO_INITDB_DATABASE=rocketdl_user_service
+      - MONGO_INITDB_ROOT_USERNAME=developer
+      - MONGO_INITDB_ROOT_PASSWORD=dev_1
+    volumes:
+      - ./config/mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo-js:ro
+      - ./mongo-volume:/data/db
+    ports:
+     - '27017-27019:27017-27019'
+
+volumes:
+  user_cache:
+    driver: local
+
